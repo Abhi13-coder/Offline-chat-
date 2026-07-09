@@ -1,0 +1,8 @@
+Job is waiting for a hosted runner to come online.
+Evaluating build.if
+Evaluating: success()
+Result: true
+Requested labels: ubuntu-latest
+Job defined at: Abhi13-coder/Offline-ai/.github/workflows/build-llama-armv7.yml@refs/heads/main
+Waiting for a runner to pick up this job...
+Job is about to start running on the hosted runner: GitHub Actions 1000000343
