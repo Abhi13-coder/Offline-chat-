@@ -29,6 +29,7 @@ jobs:
             -DANDROID_ARM_NEON=ON \
             -DCMAKE_BUILD_TYPE=MinSizeRel \
             -DGGML_NATIVE=OFF \
+            -DGGML_LLAMAFILE=OFF \
             -DBUILD_SHARED_LIBS=OFF \
             -DLLAMA_BUILD_TESTS=OFF \
             -DLLAMA_BUILD_TOOLS=ON \
