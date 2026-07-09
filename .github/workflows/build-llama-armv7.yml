@@ -29,16 +29,20 @@ jobs:
             -DANDROID_ARM_NEON=ON \
             -DCMAKE_BUILD_TYPE=MinSizeRel \
             -DGGML_NATIVE=OFF \
+            -DBUILD_SHARED_LIBS=OFF \
             -DLLAMA_BUILD_TESTS=OFF \
             -DLLAMA_BUILD_TOOLS=ON \
             -DLLAMA_BUILD_EXAMPLES=ON \
             -DLLAMA_BUILD_SERVER=OFF
 
-      - name: Build llama-cli
-        run: cmake --build build --config MinSizeRel -j$(nproc) --target llama-cli
+      - name: Build everything
+        run: cmake --build build --config MinSizeRel -j$(nproc)
 
-      - name: Upload binary
+      - name: List what got built
+        run: find build/bin -maxdepth 1 -type f -exec ls -la {} \;
+
+      - name: Upload all built binaries
         uses: actions/upload-artifact@v4
         with:
-          name: llama-cli-armeabi-v7a
-          path: build/bin/llama-cli
+          name: llama-armeabi-v7a-binaries
+          path: build/bin/*
