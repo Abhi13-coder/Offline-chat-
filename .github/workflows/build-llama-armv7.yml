@@ -1,8 +1,44 @@
-Job is waiting for a hosted runner to come online.
-Evaluating build.if
-Evaluating: success()
-Result: true
-Requested labels: ubuntu-latest
-Job defined at: Abhi13-coder/Offline-ai/.github/workflows/build-llama-armv7.yml@refs/heads/main
-Waiting for a runner to pick up this job...
-Job is about to start running on the hosted runner: GitHub Actions 1000000343
+name: Build llama.cpp armeabi-v7a
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout llama.cpp
+        uses: actions/checkout@v4
+        with:
+          repository: ggml-org/llama.cpp
+          path: llama.cpp
+
+      - name: Set up Android NDK
+        uses: nttld/setup-ndk@v1
+        id: setup-ndk
+        with:
+          ndk-version: r26d
+
+      - name: Configure (armeabi-v7a, static STL)
+        run: |
+          cmake -B build -S llama.cpp \
+            -DCMAKE_TOOLCHAIN_FILE=${{ steps.setup-ndk.outputs.ndk-path }}/build/cmake/android.toolchain.cmake \
+            -DANDROID_ABI=armeabi-v7a \
+            -DANDROID_PLATFORM=android-24 \
+            -DANDROID_STL=c++_static \
+            -DANDROID_ARM_NEON=ON \
+            -DCMAKE_BUILD_TYPE=MinSizeRel \
+            -DGGML_NATIVE=OFF \
+            -DLLAMA_BUILD_TESTS=OFF \
+            -DLLAMA_BUILD_TOOLS=ON \
+            -DLLAMA_BUILD_EXAMPLES=ON \
+            -DLLAMA_BUILD_SERVER=OFF
+
+      - name: Build llama-cli
+        run: cmake --build build --config MinSizeRel -j$(nproc) --target llama-cli
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: llama-cli-armeabi-v7a
+          path: build/bin/llama-cli
